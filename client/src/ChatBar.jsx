@@ -3,43 +3,72 @@ import React, {Component} from 'react';
 class ChatBar extends Component {
   constructor(props) {
     super(props);
-    this.state = {value: ''};
+    this.state = {value: ''}
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.state.username = this.props.user
+    this.state.username = this.props.user;
     this.state.content = '';
   }
-
-
+  // Change in text handler
   handleChange(event) {
-    let id = event.target.id
-    if(id === "username"){
-      this.setState({username: event.target.value});
-    } else if (id === "new-message"){
+    let id = event.target.id;
+    if (id === "new-message"){
       this.setState({content: event.target.value})
     }
   }
+
+  // Form submission handler
   handleSubmit(event) {
-    if(event.key == 'Enter'){
-      var buffer = JSON.stringify(this.state)
-      this.props.socket.send(buffer);
-      // this.props.newMessage(this.state.username, this.state.content)
-      // console.log("this should ", this.state.content)
-      this.setState({content: ""})
+    let id = event.target.id
+    var val = event.target.value.trim()
+
+    // If the key is "ENTER" and the text field isn't empty or spaces
+    if(event.key == 'Enter' && val !== ""){
+
+      // Handle username field
+      if(id === "username"){
+        if(this.state.username !== event.target.value){
+          this.props.sendNoti(this.state.username, event.target.value)
+          this.setState({username: event.target.value});
+        }
+      }
+      // Handle new message field
+      if (id === "new-message"){
+        // todo: delegate this responsibility to the app.
+        this.state.type = 'postMessage'
+        var buffer = JSON.stringify(this.state)
+        this.props.socket.send(buffer);
+        this.setState({content: ""})
+      }
+    }
+    // Handles changing fields with "TAB"
+    if((event.key == 'Tab') && (id === "username")){
+      this.setState({username: event.target.value})
+
+      // Only send notification if there is a change in value
+      if(this.state.username !== event.target.value){
+        this.props.sendNoti(this.state.username, event.target.value)
+      }
     }
   }
 
-
+  componentWillMount(){
+    this.state.style = {
+      color: this.props.color
+    };
+    console.log("Rendering <ChatBar/>");
+  }
 
   render() {
-    console.log("Rendering <ChatBar/>");
     return (
       <footer>
         <input
+          style={this.state.style}
           id="username"
           type="text"
-          value={this.state.username}
+          defaultValue={this.state.username}
           onChange={this.handleChange}
+          onKeyDown={this.handleSubmit}
           />
         <input
           id="new-message"
