@@ -11,7 +11,7 @@ class MessageList extends Component {
     return (
       <div className="message-system">
         {
-          this.props.messages.map(function(value, index){
+          this.props.data.map(function(value, index){
             return <Message key={index} body={value} />
           })
         }
