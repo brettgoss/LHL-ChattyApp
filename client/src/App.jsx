@@ -12,13 +12,31 @@ class App extends Component {
 
     this.socket = new WebSocket("ws://localhost:4000");
     this.postMessage = this.postMessage.bind(this)
+    this.sendNoti = this.sendNoti.bind(this)
+    this.postNoti = this.postNoti.bind(this)
+
+
     this.state = {
       currentUser: {name: "Anonymous"}, // optional. if currentUser is not defined, it means the user is Anonymous
       messages: []
     };
   }
-  postMessage(name, content){
-    const newMessage = {id: 3, username: name, content: content};
+  sendNoti(oldName, newName){
+    // console.log(oldName)
+    var userData = {
+      type: 'postNotification',
+      oldName: oldName,
+      newName: newName
+    }
+    var buffer = JSON.stringify(userData)
+    this.socket.send(buffer);
+  }
+  postNoti(content){
+    const newNoti = this.state.messages.concat({notification: content})
+    this.setState({messages: newNoti})
+  }
+  postMessage(type, id, name, content){
+    const newMessage = {id: id, username: name, content: content};
     const messages = this.state.messages.concat(newMessage)
     this.setState({messages: messages})
   }
@@ -30,10 +48,23 @@ class App extends Component {
     };
 
     this.socket.onmessage = (event) => {
-      var obj = JSON.parse(event.data)
-      var name = obj.username
+      var obj     = JSON.parse(event.data)
+      var type    = obj.type
+      var id      = obj.id
+      var name    = obj.username
       var content = obj.content
-      this.postMessage(name, content)
+
+      switch(type){
+        case 'incomingMessage':
+          this.postMessage(type, id, name, content)
+          break;
+        case 'incomingNotification':
+          this.postNoti(content)
+          break;
+        default:
+          console.log("Unknown data type: ", type)
+        }
+
       // code to handle incoming message
     }
   }
@@ -52,7 +83,11 @@ class App extends Component {
         <div id="message-list">
           <MessageList data={this.state.messages} />
         </div>
-        <ChatBar user={this.state.currentUser.name} newMessage={this.postMessage} socket={this.socket} />
+        <ChatBar
+          user={this.state.currentUser.name}
+          newMessage={this.sendMessage}
+          sendNoti={this.sendNoti}
+          socket={this.socket} />
       </div>
     );
   }
