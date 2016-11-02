@@ -6,10 +6,12 @@ class Message extends Component {
   }
   render() {
     console.log("Rendering <Message/>");
+
+
     return (
       <div className="message">
-        <span >{this.props.body.notification}</span>
-        <span className="username">{this.props.body.username}</span>
+        <div style={this.props.body.color}><em>{this.props.body.notification}</em></div>
+        <span style={this.props.body.color} className="username">{this.props.body.username}</span>
         <span className="content">{this.props.body.content}</span>
       </div>
     );

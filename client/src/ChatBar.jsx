@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 class ChatBar extends Component {
   constructor(props) {
     super(props);
-    this.state = {value: ''};
+    this.state = {value: ''}
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.state.username = this.props.user;
@@ -21,8 +21,9 @@ class ChatBar extends Component {
   }
   handleSubmit(event) {
     let id = event.target.id
+    var val = event.target.value.trim()
     if(event.key == 'Enter'){
-      if(id === "username"){
+      if(id === "username" && val !== ""){
         if(this.state.username !== event.target.value){
           this.props.sendNoti(this.state.username, event.target.value)
           this.setState({username: event.target.value});
@@ -46,13 +47,19 @@ class ChatBar extends Component {
     }
   }
 
-
+  componentWillMount(){
+    this.state.style = {
+        color: this.props.color
+    };
+    var color = this.props.color
+    console.log("Rendering <ChatBar/>");
+  }
 
   render() {
-    console.log("Rendering <ChatBar/>");
     return (
       <footer>
         <input
+          style={this.state.style}
           id="username"
           type="text"
           defaultValue={this.state.username}

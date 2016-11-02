@@ -9,20 +9,17 @@ class App extends Component {
   constructor(props) {
     super(props)
 
-
     this.socket = new WebSocket("ws://localhost:4000");
     this.postMessage = this.postMessage.bind(this)
     this.sendNoti = this.sendNoti.bind(this)
     this.postNoti = this.postNoti.bind(this)
-
-
     this.state = {
       currentUser: {name: "Anonymous"}, // optional. if currentUser is not defined, it means the user is Anonymous
       messages: []
     };
   }
+
   sendNoti(oldName, newName){
-    // console.log(oldName)
     var userData = {
       type: 'postNotification',
       oldName: oldName,
@@ -31,12 +28,16 @@ class App extends Component {
     var buffer = JSON.stringify(userData)
     this.socket.send(buffer);
   }
-  postNoti(content){
-    const newNoti = this.state.messages.concat({notification: content})
+  postNoti(content, color, total){
+    if(total){
+      this.setState({total: total});
+      console.log("total",this.state.total)
+    }
+    const newNoti = this.state.messages.concat({notification: content, color: color})
     this.setState({messages: newNoti})
   }
-  postMessage(type, id, name, content){
-    const newMessage = {id: id, username: name, content: content};
+  postMessage(type, id, name, content, color){
+    const newMessage = {id: id, username: name, content: content, color: color};
     const messages = this.state.messages.concat(newMessage)
     this.setState({messages: messages})
   }
@@ -44,7 +45,6 @@ class App extends Component {
   componentDidMount(){
     this.socket.onopen = function (event) {
       console.log("Connected to Server.")
-
     };
 
     this.socket.onmessage = (event) => {
@@ -53,19 +53,19 @@ class App extends Component {
       var id      = obj.id
       var name    = obj.username
       var content = obj.content
+      var total   = obj.total
+      var color   = obj.style
 
       switch(type){
         case 'incomingMessage':
-          this.postMessage(type, id, name, content)
+          this.postMessage(type, id, name, content, color)
           break;
         case 'incomingNotification':
-          this.postNoti(content)
+          this.postNoti(content, color, total)
           break;
         default:
           console.log("Unknown data type: ", type)
         }
-
-      // code to handle incoming message
     }
   }
 
@@ -79,11 +79,14 @@ class App extends Component {
       <div className="wrapper">
         <nav>
           <h1>Chatty</h1>
+          <div id="userCount">{this.state.total} users online.</div>
         </nav>
         <div id="message-list">
-          <MessageList data={this.state.messages} />
+          <MessageList
+            data={this.state.messages} />
         </div>
         <ChatBar
+          color={this.randColor}
           user={this.state.currentUser.name}
           newMessage={this.sendMessage}
           sendNoti={this.sendNoti}
