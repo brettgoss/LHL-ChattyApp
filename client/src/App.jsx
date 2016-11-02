@@ -14,33 +14,32 @@ class App extends Component {
     this.postMessage = this.postMessage.bind(this)
     this.state = {
       currentUser: {name: "Anonymous"}, // optional. if currentUser is not defined, it means the user is Anonymous
-      messages: [
-        {
-          username: "Bob",
-          content: "Has anyone seen my marbles?",
-        },
-        {
-          username: "Anonymous",
-          content: "No, I think you lost them. You lost your marbles Bob. You lost them for good."
-        }
-      ]
+      messages: []
     };
   }
-
-  componentDidMount(){
-    console.log('Protocol: ', this.socket.protocol)
-    this.socket.onopen = function (event) {
-      console.log("Connected to Server.")
-
-    };
-  }
-
-
   postMessage(name, content){
     const newMessage = {id: 3, username: name, content: content};
     const messages = this.state.messages.concat(newMessage)
     this.setState({messages: messages})
   }
+
+  componentDidMount(){
+    this.socket.onopen = function (event) {
+      console.log("Connected to Server.")
+
+    };
+
+    this.socket.onmessage = (event) => {
+      var obj = JSON.parse(event.data)
+      var name = obj.username
+      var content = obj.content
+      this.postMessage(name, content)
+      // code to handle incoming message
+    }
+  }
+
+
+
 
 
   render() {
