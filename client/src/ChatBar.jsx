@@ -21,8 +21,10 @@ class ChatBar extends Component {
   }
   handleSubmit(event) {
     if(event.key == 'Enter'){
-      this.props.newMessage(this.state.username, this.state.content)
-      console.log("this should ", this.state.value)
+      var buffer = JSON.stringify(this.state)
+      this.props.socket.send(buffer);
+      // this.props.newMessage(this.state.username, this.state.content)
+      // console.log("this should ", this.state.content)
       this.setState({content: ""})
     }
   }
