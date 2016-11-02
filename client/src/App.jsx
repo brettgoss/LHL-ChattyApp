@@ -104,8 +104,7 @@ class App extends Component {
           color={this.randColor}
           user={this.state.currentUser.name}
           sendMessage={this.sendMessage}
-          sendNoti={this.sendNoti}
-          socket={this.socket} />
+          sendNoti={this.sendNoti} />
       </div>
     );
   }
