@@ -10,6 +10,7 @@ class App extends Component {
     super(props)
 
     this.socket = new WebSocket("ws://localhost:4000");
+    this.sendMessage = this.sendMessage.bind(this)
     this.postMessage = this.postMessage.bind(this)
     this.sendNoti = this.sendNoti.bind(this)
     this.postNoti = this.postNoti.bind(this)
@@ -18,7 +19,7 @@ class App extends Component {
       messages: []
     };
   }
-
+  // Sends notification to the server.
   sendNoti(oldName, newName){
     var userData = {
       type: 'postNotification',
@@ -28,14 +29,25 @@ class App extends Component {
     var buffer = JSON.stringify(userData)
     this.socket.send(buffer);
   }
+
+  // Recieves notification from the server
   postNoti(content, color, total){
+    // If the notification is the number of clients connected
     if(total){
       this.setState({total: total});
       console.log("total",this.state.total)
     }
+    // Otherwise, it's a name change notification. Send it to the message handler
     const newNoti = this.state.messages.concat({notification: content, color: color})
     this.setState({messages: newNoti})
   }
+
+  // Sends message to the server (or will...)
+  sendMessage(){
+    // todo: Move sending message duties out of chat bar...
+  }
+
+  // Recieves message from the server
   postMessage(type, id, name, content, color){
     const newMessage = {id: id, username: name, content: content, color: color};
     const messages = this.state.messages.concat(newMessage)
@@ -46,8 +58,11 @@ class App extends Component {
     this.socket.onopen = function (event) {
       console.log("Connected to Server.")
     };
-
+    // On incoming message from the server, delegate tasks
     this.socket.onmessage = (event) => {
+
+      // Parse the data back into an object,
+      // and then save the values into variables.
       var obj     = JSON.parse(event.data)
       var type    = obj.type
       var id      = obj.id
@@ -56,6 +71,8 @@ class App extends Component {
       var total   = obj.total
       var color   = obj.style
 
+
+      // Decide if incoming data is a message or notification.
       switch(type){
         case 'incomingMessage':
           this.postMessage(type, id, name, content, color)
@@ -68,10 +85,6 @@ class App extends Component {
         }
     }
   }
-
-
-
-
 
   render() {
     console.log("Rendering <App/>");

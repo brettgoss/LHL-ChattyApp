@@ -51,7 +51,6 @@ wss.on('connection', (ws) => {
     if(incomingData.type == 'postMessage'){
       console.log('> ' + incomingData.username + ' said ' + incomingData.content);
 
-
       var uid = uuid.v4()
       var response = {
         type: 'incomingMessage',

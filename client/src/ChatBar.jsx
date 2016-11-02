@@ -9,38 +9,43 @@ class ChatBar extends Component {
     this.state.username = this.props.user;
     this.state.content = '';
   }
-
+  // Change in text handler
   handleChange(event) {
     let id = event.target.id;
-    if(id === "username"){
-      // this.setState({username: event.target.value});
-    }
     if (id === "new-message"){
       this.setState({content: event.target.value})
     }
   }
+
+  // Form submission handler
   handleSubmit(event) {
     let id = event.target.id
     var val = event.target.value.trim()
-    if(event.key == 'Enter'){
-      if(id === "username" && val !== ""){
+
+    // If the key is "ENTER" and the text field isn't empty or spaces
+    if(event.key == 'Enter' && val !== ""){
+
+      // Handle username field
+      if(id === "username"){
         if(this.state.username !== event.target.value){
           this.props.sendNoti(this.state.username, event.target.value)
           this.setState({username: event.target.value});
         }
       }
-      else if (id === "new-message"){
-        var msg = event.target.value.trim()
-        if(msg !== ""){
-          this.state.type = 'postMessage'
-          var buffer = JSON.stringify(this.state)
-          this.props.socket.send(buffer);
-          this.setState({content: ""})
-        }
+      // Handle new message field
+      if (id === "new-message"){
+        // todo: delegate this responsibility to the app.
+        this.state.type = 'postMessage'
+        var buffer = JSON.stringify(this.state)
+        this.props.socket.send(buffer);
+        this.setState({content: ""})
       }
     }
+    // Handles changing fields with "TAB"
     if((event.key == 'Tab') && (id === "username")){
       this.setState({username: event.target.value})
+
+      // Only send notification if there is a change in value
       if(this.state.username !== event.target.value){
         this.props.sendNoti(this.state.username, event.target.value)
       }
@@ -49,9 +54,8 @@ class ChatBar extends Component {
 
   componentWillMount(){
     this.state.style = {
-        color: this.props.color
+      color: this.props.color
     };
-    var color = this.props.color
     console.log("Rendering <ChatBar/>");
   }
 
