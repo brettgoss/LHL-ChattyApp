@@ -93,7 +93,7 @@ class App extends Component {
     return (
       <div className="wrapper">
         <nav>
-          <h1>Chatty</h1>
+          <h1>ChattyApp</h1>
           <div id="userCount">{this.state.total} users online.</div>
         </nav>
         <div id="message-list">
@@ -104,8 +104,7 @@ class App extends Component {
           color={this.randColor}
           user={this.state.currentUser.name}
           sendMessage={this.sendMessage}
-          sendNoti={this.sendNoti}
-          socket={this.socket} />
+          sendNoti={this.sendNoti} />
       </div>
     );
   }
