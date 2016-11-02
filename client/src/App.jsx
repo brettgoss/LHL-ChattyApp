@@ -43,8 +43,10 @@ class App extends Component {
   }
 
   // Sends message to the server (or will...)
-  sendMessage(){
-    // todo: Move sending message duties out of chat bar...
+  sendMessage(message){
+    message.type = 'postMessage'
+    var buffer = JSON.stringify(message)
+    this.socket.send(buffer);
   }
 
   // Recieves message from the server
@@ -82,7 +84,7 @@ class App extends Component {
           break;
         default:
           console.log("Unknown data type: ", type)
-        }
+      }
     }
   }
 
@@ -101,7 +103,7 @@ class App extends Component {
         <ChatBar
           color={this.randColor}
           user={this.state.currentUser.name}
-          newMessage={this.sendMessage}
+          sendMessage={this.sendMessage}
           sendNoti={this.sendNoti}
           socket={this.socket} />
       </div>
