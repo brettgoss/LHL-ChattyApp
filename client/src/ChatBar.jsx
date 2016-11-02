@@ -34,10 +34,7 @@ class ChatBar extends Component {
       }
       // Handle new message field
       if (id === "new-message"){
-        // todo: delegate this responsibility to the app.
-        this.state.type = 'postMessage'
-        var buffer = JSON.stringify(this.state)
-        this.props.socket.send(buffer);
+        this.props.sendMessage(this.state)
         this.setState({content: ""})
       }
     }
