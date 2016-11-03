@@ -10,7 +10,7 @@ class MessageList extends Component {
     console.log("Rendering <MessageList/>");
 
     return (
-      <div className="message-system">
+      <div id="message-list" className="message-system">
         {
           this.props.data.map(function(value, index){
             return <Message key={index} body={value} />
