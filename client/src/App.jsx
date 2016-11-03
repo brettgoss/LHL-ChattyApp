@@ -5,7 +5,6 @@ import ChatBar from './ChatBar.jsx';
 
 class App extends Component {
 
-
   constructor(props) {
     super(props)
 
@@ -14,19 +13,16 @@ class App extends Component {
     this.postMessage = this.postMessage.bind(this)
     this.sendNoti = this.sendNoti.bind(this)
     this.postNoti = this.postNoti.bind(this)
-    this.state = {
-      currentUser: {name: "Anonymous"}, // optional. if currentUser is not defined, it means the user is Anonymous
-      messages: []
-    };
+    this.state = { messages: [] }
   }
   // Sends notification to the server.
   sendNoti(oldName, newName){
-    var userData = {
+    let userData = {
       type: 'postNotification',
       oldName: oldName,
       newName: newName
     }
-    var buffer = JSON.stringify(userData)
+    let buffer = JSON.stringify(userData)
     this.socket.send(buffer);
   }
 
@@ -34,56 +30,48 @@ class App extends Component {
   postNoti(content, color, total){
     // If the notification is the number of clients connected
     if(total){
-      this.setState({total: total});
+      this.setState({total: total})
       console.log("total",this.state.total)
     }
     // Otherwise, it's a name change notification. Send it to the message handler
-    const newNoti = this.state.messages.concat({notification: content, color: color})
+    let newNoti = this.state.messages.concat({notification: content, color: color})
     this.setState({messages: newNoti})
   }
 
   // Sends message to the server (or will...)
   sendMessage(message){
     message.type = 'postMessage'
-    var buffer = JSON.stringify(message)
+    let buffer = JSON.stringify(message)
     this.socket.send(buffer);
   }
 
   // Recieves message from the server
   postMessage(type, id, name, content, color){
-    const newMessage = {id: id, username: name, content: content, color: color};
-    const messages = this.state.messages.concat(newMessage)
+    let newMessage = {id: id, username: name, content: content, color: color};
+    let messages = this.state.messages.concat(newMessage)
     this.setState({messages: messages})
   }
 
   componentDidMount(){
     this.socket.onopen = function (event) {
       console.log("Connected to Server.")
-    };
+    }
     // On incoming message from the server, delegate tasks
     this.socket.onmessage = (event) => {
 
       // Parse the data back into an object,
-      // and then save the values into variables.
-      var obj     = JSON.parse(event.data)
-      var type    = obj.type
-      var id      = obj.id
-      var name    = obj.username
-      var content = obj.content
-      var total   = obj.total
-      var color   = obj.style
-
+      let obj = JSON.parse(event.data)
 
       // Decide if incoming data is a message or notification.
-      switch(type){
+      switch(obj.type){
         case 'incomingMessage':
-          this.postMessage(type, id, name, content, color)
+          this.postMessage(obj.type, obj.id, obj.username, obj.content, obj.style)
           break;
         case 'incomingNotification':
-          this.postNoti(content, color, total)
+          this.postNoti(obj.content, obj.style, obj.total)
           break;
         default:
-          console.log("Unknown data type: ", type)
+          console.log("Unknown data type: ", obj.type)
       }
     }
   }
@@ -96,13 +84,10 @@ class App extends Component {
           <h1>ChattyApp</h1>
           <div id="userCount">{this.state.total} users online.</div>
         </nav>
-        <div id="message-list">
-          <MessageList
-            data={this.state.messages} />
-        </div>
+        <MessageList
+          data={this.state.messages} />
         <ChatBar
           color={this.randColor}
-          user={this.state.currentUser.name}
           sendMessage={this.sendMessage}
           sendNoti={this.sendNoti} />
       </div>

@@ -1,17 +1,19 @@
-import React, {Component} from 'react';
+import React, {Component} from 'react'
 
 class ChatBar extends Component {
   constructor(props) {
     super(props);
-    this.state = {value: ''}
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.state.username = this.props.user;
-    this.state.content = '';
+    this.state = {
+      value: '',
+      username: 'Anonymous',
+      content: ''
+    }
+    this.handleChange = this.handleChange.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
   }
   // Change in text handler
   handleChange(event) {
-    let id = event.target.id;
+    let id = event.target.id
     if (id === "new-message"){
       this.setState({content: event.target.value})
     }
@@ -29,7 +31,7 @@ class ChatBar extends Component {
       if(id === "username"){
         if(this.state.username !== event.target.value){
           this.props.sendNoti(this.state.username, event.target.value)
-          this.setState({username: event.target.value});
+          this.setState({username: event.target.value})
         }
       }
       // Handle new message field
@@ -50,9 +52,11 @@ class ChatBar extends Component {
   }
 
   componentWillMount(){
-    this.state.style = {
-      color: this.props.color
-    };
+    this.setState({
+      style: {
+        color: this.props.color
+      }
+    })
     console.log("Rendering <ChatBar/>");
   }
 
@@ -73,10 +77,10 @@ class ChatBar extends Component {
           placeholder="Type a message and hit ENTER"
           value={this.state.content}
           onChange={this.handleChange}
-          onKeyDown={this.handleSubmit}
+          onKeyUp={this.handleSubmit}
           />
       </footer>
-    );
+    )
   }
 }
 export default ChatBar;
