@@ -38,7 +38,7 @@ class App extends Component {
     this.setState({messages: newNoti})
   }
 
-  // Sends message to the server (or will...)
+  // Sends message to the server
   sendMessage(message){
     message.type = 'postMessage'
     let buffer = JSON.stringify(message)
@@ -82,7 +82,7 @@ class App extends Component {
       <div className="wrapper">
         <nav>
           <h1>ChattyApp</h1>
-          <div id="userCount">{this.state.total} users online.</div>
+          <div id="userCount">Users Online: {this.state.total}</div>
         </nav>
         <MessageList
           data={this.state.messages} />

@@ -41,8 +41,12 @@ wss.on('connection', (ws) => {
   console.log(wss.clients.length + ' users online')
 
   function randColor() {
-    let colorArray = ['#ff0000','#e4ab00','#43b427','#0030ff','#ff00c7']
-    let num = Math.floor(Math.random()*5)
+    let colorArray = [
+      '#e07f19','#bc2333','#43b427',
+      '#324cbf','#985389','#8e1370',
+      '#5d2922','#1cb1a7','#29116f'
+    ]
+    let num = Math.floor(Math.random() * colorArray.length)
     return colorArray[num]
   }
   let userColor = randColor()
