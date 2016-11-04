@@ -81,7 +81,7 @@ class App extends Component {
     return (
       <div className="wrapper">
         <nav>
-          <h1>ChattyApp</h1>
+          <div id="brand">ChattyApp</div>
           <div id="userCount">Users Online: {this.state.total}</div>
         </nav>
         <MessageList
