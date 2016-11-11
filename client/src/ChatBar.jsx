@@ -69,16 +69,14 @@ class ChatBar extends Component {
           type="text"
           defaultValue={this.state.username}
           onChange={this.handleChange}
-          onKeyDown={this.handleSubmit}
-          />
+          onKeyDown={this.handleSubmit} />
         <input
           id="new-message"
           type="text"
           placeholder="Type a message and hit ENTER"
           value={this.state.content}
           onChange={this.handleChange}
-          onKeyUp={this.handleSubmit}
-          />
+          onKeyUp={this.handleSubmit} />
       </footer>
     )
   }
